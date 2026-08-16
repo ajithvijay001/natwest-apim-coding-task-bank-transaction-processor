@@ -34,4 +34,36 @@ public class AccountServiceTest {
 		assertThrows( IllegalArgumentException.class, () -> {accountService.createAccount(accountName, amount);});
 		
 	}
+	
+	@Test
+	void deposit_withValidAmount_toValidAccountCorrectly() {
+		String accountName = "John";
+		BigDecimal amount = new BigDecimal("10000.00");
+		BigDecimal depositAmount = new BigDecimal("5000.00");
+		Accounts account = accountService.createAccount(accountName, amount);
+		accountService.deposit(account.getAccountId(),depositAmount);
+		
+		assertEquals(new BigDecimal("15000.00"), account.getBalance());
+	}
+	
+	@Test
+	void deposit_toNonExistigAccount_throwsException() {
+		BigDecimal depositAmount = new BigDecimal("5000.00");
+		
+		assertThrows(IllegalArgumentException.class,() -> {
+			accountService.deposit(0L, depositAmount);
+		});
+	}
+	
+	@Test
+	void deposit_withNegativeAmount_throwsException() {
+		String accountName = "John";
+		BigDecimal amount = new BigDecimal("10000.00");
+		BigDecimal depositAmount = new BigDecimal("-5000.00");
+		Accounts account = accountService.createAccount(accountName, amount);
+		
+		assertThrows(IllegalArgumentException.class,() -> {accountService.deposit(account.getAccountId(),depositAmount);});
+	}
+	
+
 }
