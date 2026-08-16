@@ -1,11 +1,14 @@
 package com.natwest.bank_transaction_processor.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
+
+import com.natwest.bank_transaction_processor.model.Accounts;
 
 public class AccountServiceTest {
 	
@@ -19,7 +22,7 @@ public class AccountServiceTest {
 		
 		Accounts account = accountService.createAccount(accountName, amount);
 		
-		assertEquals(amount, account.getAvailableBalance());
+		assertEquals(amount, account.getBalance());
 		assertNotNull(account.getAccountId());
 	}
 	
