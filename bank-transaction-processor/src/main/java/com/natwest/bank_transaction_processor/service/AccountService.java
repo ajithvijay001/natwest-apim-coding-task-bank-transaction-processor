@@ -23,7 +23,7 @@ public class AccountService {
 		return newAccount; 
 	}
 	
-	public BigDecimal deposit(Long accountId, BigDecimal depositAmount) {
+	public Accounts deposit(Long accountId, BigDecimal depositAmount) {
 		
 		if(!accountMap.containsKey(accountId)) throw new IllegalArgumentException("Account Id does not exists");
 		
@@ -31,8 +31,8 @@ public class AccountService {
 		
 		Accounts account = accountMap.get(accountId);
 		account.setBalance(account.getBalance().add(depositAmount));
-		accountMap.put(accountId, account);
 		
-		return account.getBalance();
+		return account;
 	}
+	
 }
