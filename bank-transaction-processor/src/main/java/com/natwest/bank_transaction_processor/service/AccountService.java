@@ -25,9 +25,9 @@ public class AccountService {
 	
 	public BigDecimal deposit(Long accountId, BigDecimal depositAmount) {
 		
-		if(depositAmount.compareTo(BigDecimal.ZERO)<=0) throw new IllegalArgumentException("Deposit amount should be greater than 0");
-		
 		if(!accountMap.containsKey(accountId)) throw new IllegalArgumentException("Account Id does not exists");
+		
+		if(depositAmount.compareTo(BigDecimal.ZERO)<=0) throw new IllegalArgumentException("Deposit amount should be greater than 0");
 		
 		Accounts account = accountMap.get(accountId);
 		account.setBalance(account.getBalance().add(depositAmount));
