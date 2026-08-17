@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.stereotype.Service;
+
 import com.natwest.bank_transaction_processor.model.Accounts;
 import com.natwest.bank_transaction_processor.model.enums.TransactionType;
 
+@Service
 public class AccountService {
 	
 	private final TransactionService transactionService;

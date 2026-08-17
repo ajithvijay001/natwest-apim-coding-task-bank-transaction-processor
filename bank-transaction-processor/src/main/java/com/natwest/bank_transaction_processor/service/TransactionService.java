@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.stereotype.Service;
+
 import com.natwest.bank_transaction_processor.model.Transaction;
 import com.natwest.bank_transaction_processor.model.enums.TransactionType;
 
+@Service
 public class TransactionService {
 	
 	private final Map<Long, List<Transaction>> transactionMap = new HashMap<>();
