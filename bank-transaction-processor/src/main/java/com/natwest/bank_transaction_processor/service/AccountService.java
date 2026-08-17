@@ -48,4 +48,21 @@ public class AccountService {
 		
 		return account;
 	}
+	
+	public void transfer(Long fromAccount, Long toAccount, BigDecimal transferAmount) {
+		
+		if(fromAccount.equals(toAccount)) throw new IllegalArgumentException("Self transfer is restricted");
+		
+		if(!accountMap.containsKey(fromAccount)) throw new IllegalArgumentException("Source account does not exists");
+		
+		if(!accountMap.containsKey(toAccount)) throw new IllegalArgumentException("Desination account does not exists");
+		
+		if(transferAmount.compareTo(BigDecimal.ZERO)<=0) throw new IllegalArgumentException("Transfer amount should be greater than 0.");
+		
+		if(accountMap.get(fromAccount).getBalance().compareTo(transferAmount)<0) throw new IllegalArgumentException("Insufficent Balance in source account");
+		
+		withdraw(fromAccount, transferAmount);
+		deposit(toAccount, transferAmount);
+		
+	}
 }
