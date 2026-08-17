@@ -105,5 +105,74 @@ public class AccountServiceTest {
 		
 		assertThrows(IllegalArgumentException.class,() -> {accountService.withdraw(account.getAccountId(),withdrawAmount);});
 	}
+	
+	@Test
+	void transfer_withValidAmount_betweenValidAccountsCorrectly() {
+		
+		Accounts fromAccount = accountService.createAccount("Mafi",new BigDecimal("10000.00"));
+		Accounts toAccount = accountService.createAccount("John",new BigDecimal("2000.00"));
+		BigDecimal transferAmount = new BigDecimal("3000.00");
+		
+		accountService.transfer(fromAccount.getAccountId(), toAccount.getAccountId(), transferAmount);
+		
+		assertEquals(new BigDecimal("7000.00"), fromAccount.getBalance());
+		assertEquals(new BigDecimal("5000.00"), toAccount.getBalance());
+	}
+	
+	@Test
+	void transfer_toSameAccount_thorwsException() {
+		Accounts account = accountService.createAccount("Mafi",new BigDecimal("10000.00"));
+		BigDecimal transferAmount = new BigDecimal("2000.00");
+		
+		assertThrows(IllegalArgumentException.class, () ->{
+			accountService.transfer(account.getAccountId(), account.getAccountId(), transferAmount);
+		});
+	}
+	
+	@Test
+	void transfer_fromNonExistingAccount_throwsException() {
+		
+		Accounts toAccount = accountService.createAccount("John",new BigDecimal("2000.00"));
+		BigDecimal transferAmount = new BigDecimal("2500.00");
+		
+		
+		assertThrows(IllegalArgumentException.class,() -> {
+			accountService.transfer(0L,toAccount.getAccountId(), transferAmount);
+		});
+	}
+	
+	@Test
+	void transfer_toNonExistingAccount_throwsException() {
+		
+		Accounts fromAccount = accountService.createAccount("Mafi",new BigDecimal("10000.00"));		
+		BigDecimal transferAmount = new BigDecimal("2500.00");
+		
+		assertThrows(IllegalArgumentException.class,() -> {
+			accountService.transfer(fromAccount.getAccountId(), 0L, transferAmount);
+		});
+	}
+	
+	@Test
+	void transfer_withValidAmount_insufficientBalance_throwsException() {
+		Accounts fromAccount = accountService.createAccount("Mafi",new BigDecimal("1500.00"));
+		Accounts toAccount = accountService.createAccount("John",new BigDecimal("2000.00"));
+		BigDecimal transferAmount = new BigDecimal("3000.00");
+		
+		assertThrows(IllegalArgumentException.class,() -> {
+			accountService.transfer(fromAccount.getAccountId(), toAccount.getAccountId(),transferAmount);
+			});
+	}
+	
+	@Test
+	void transfer_withInvalidAmount_betweenValidAccount_throwsException() {
+		Accounts fromAccount = accountService.createAccount("Mafi",new BigDecimal("10000.00"));
+		Accounts toAccount = accountService.createAccount("John",new BigDecimal("2000.00"));
+		BigDecimal transferAmount = new BigDecimal("-2000.00");
+		
+		assertThrows(IllegalArgumentException.class, () ->{
+			accountService.transfer(fromAccount.getAccountId(), toAccount.getAccountId(), transferAmount);
+		} );
+	}
+	
 
 }
