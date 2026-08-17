@@ -1,5 +1,6 @@
 package com.natwest.bank_transaction_processor.controller;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -85,6 +86,28 @@ public class AccountControllerTest {
                         .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.balance").value(7000.00));
+    }
+    
+    @Test
+    void transfer_withValidRequest_returns200() throws Exception {
+        Accounts mockFromAccount = new Accounts("Mafi", new BigDecimal("7000.00"));
+        mockFromAccount.setAccountId(1111111111111111L);
+
+        doNothing().when(accountService)
+                .transfer(1111111111111111L, 2222222222222222L, new BigDecimal("3000.00"));
+
+        String requestBody = """
+                {
+                  "fromAccountId": 1111111111111111,
+                  "toAccountId": 2222222222222222,
+                  "amount": 3000.00
+                }
+                """;
+
+        mockMvc.perform(post("/accounts/transfer")
+        		.contentType(MediaType.APPLICATION_JSON)
+        		.content(requestBody))
+        .andExpect(status().isOk());
     }
     
 }
