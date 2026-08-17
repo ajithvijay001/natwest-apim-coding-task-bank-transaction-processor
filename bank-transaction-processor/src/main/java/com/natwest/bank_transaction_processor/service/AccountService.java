@@ -78,4 +78,11 @@ public class AccountService {
 		deposit(toAccount, transferAmount);
 		
 	}
+	
+	public Accounts getAccount(Long accountId) {
+		
+	    if (!accountMap.containsKey(accountId)) throw new IllegalArgumentException("Account Id does not exist");
+	    
+	    return accountMap.get(accountId);
+	}
 }

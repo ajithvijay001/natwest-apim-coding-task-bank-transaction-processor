@@ -1,6 +1,7 @@
 package com.natwest.bank_transaction_processor.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,5 +47,11 @@ public class AccountController {
     public ResponseEntity<Void> transfer(@RequestBody TransferReqeust request) {
         accountService.transfer(request.getFromAccountId(), request.getToAccountId(), request.getAmount());
         return ResponseEntity.ok().build();
+    }
+    
+    @GetMapping("/{id}/balance")
+    public ResponseEntity<Accounts> getBalance(@PathVariable Long id) {
+        Accounts account = accountService.getAccount(id);
+        return ResponseEntity.ok(account);
     }
 }
