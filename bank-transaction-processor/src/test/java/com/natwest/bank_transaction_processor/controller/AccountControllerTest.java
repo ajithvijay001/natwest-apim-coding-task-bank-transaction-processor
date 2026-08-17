@@ -67,4 +67,24 @@ public class AccountControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.balance").value(15000.00));
     }
+    
+    @Test
+    void withdraw_withValidRequest_returns200AndUpdatedAccount() throws Exception {
+        Accounts mockAccount = new Accounts("John", new BigDecimal("7000.00"));
+        mockAccount.setAccountId(1234567890123456L);
+
+        when(accountService.withdraw(1234567890123456L, new BigDecimal("3000.00")))
+                .thenReturn(mockAccount);
+
+        String requestBody = """
+                { "amount": 3000.00 }
+                """;
+
+        mockMvc.perform(post("/accounts/1234567890123456/withdraw")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.balance").value(7000.00));
+    }
+    
 }
