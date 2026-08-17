@@ -1,5 +1,7 @@
 package com.natwest.bank_transaction_processor.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +14,7 @@ import com.natwest.bank_transaction_processor.dto.AmountRequest;
 import com.natwest.bank_transaction_processor.dto.CreateAccountRequest;
 import com.natwest.bank_transaction_processor.dto.TransferReqeust;
 import com.natwest.bank_transaction_processor.model.Accounts;
+import com.natwest.bank_transaction_processor.model.Transaction;
 import com.natwest.bank_transaction_processor.service.AccountService;
 
 @RestController
@@ -53,5 +56,11 @@ public class AccountController {
     public ResponseEntity<Accounts> getBalance(@PathVariable Long id) {
         Accounts account = accountService.getAccount(id);
         return ResponseEntity.ok(account);
+    }
+    
+    @GetMapping("/{id}/transactions")
+    public ResponseEntity<List<Transaction>> getTransactionHistory(@PathVariable Long id) {
+        List<Transaction> history = accountService.getTransactionHistory(id);
+        return ResponseEntity.ok(history);
     }
 }

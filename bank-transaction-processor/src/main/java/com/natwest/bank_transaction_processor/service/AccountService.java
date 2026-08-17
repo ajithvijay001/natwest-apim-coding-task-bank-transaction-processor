@@ -3,12 +3,14 @@ package com.natwest.bank_transaction_processor.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 
 import com.natwest.bank_transaction_processor.model.Accounts;
+import com.natwest.bank_transaction_processor.model.Transaction;
 import com.natwest.bank_transaction_processor.model.enums.TransactionType;
 
 @Service
@@ -84,5 +86,9 @@ public class AccountService {
 	    if (!accountMap.containsKey(accountId)) throw new IllegalArgumentException("Account Id does not exist");
 	    
 	    return accountMap.get(accountId);
+	}
+	
+	public List<Transaction> getTransactionHistory(Long accountId) {
+	    return transactionService.getTransactionHistory(accountId);
 	}
 }
