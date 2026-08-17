@@ -82,7 +82,7 @@ public class AccountServiceTest {
 		BigDecimal withdrawAmount = new BigDecimal("5000.00");
 		
 		assertThrows(IllegalArgumentException.class,() -> {
-			accountService.deposit(0L, withdrawAmount);
+			accountService.withdraw(0L, withdrawAmount);
 		});
 	}
 	
