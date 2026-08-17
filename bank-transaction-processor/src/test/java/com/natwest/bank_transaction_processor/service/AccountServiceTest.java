@@ -5,14 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import com.natwest.bank_transaction_processor.model.Accounts;
+import com.natwest.bank_transaction_processor.model.Transaction;
+import com.natwest.bank_transaction_processor.model.enums.TransactionType;
 
 public class AccountServiceTest {
 	
-	private final AccountService accountService = new AccountService();
+	private final TransactionService transactionService = new TransactionService();
+	private final AccountService accountService = new AccountService(transactionService);
 
 	@Test
 	void createAccount_withValidAmount_setBalanceCorrectly() {
@@ -174,5 +178,50 @@ public class AccountServiceTest {
 		} );
 	}
 	
+	@Test
+	void deposit_withValidAmount_recordsTransactionInLedger() {
+	    Accounts account = accountService.createAccount("John", new BigDecimal("10000.00"));
+	    BigDecimal depositAmount = new BigDecimal("5000.00");
+
+	    accountService.deposit(account.getAccountId(), depositAmount);
+
+	    List<Transaction> history = transactionService.getTransactionHistory(account.getAccountId());
+
+	    assertEquals(1, history.size());
+	    assertEquals(TransactionType.CREDIT, history.get(0).transactionType());
+	    assertEquals(depositAmount, history.get(0).amount());
+	}
+	
+	@Test
+	void withdraw_withValidAmount_recordsTransactionInLedger() {
+	    Accounts account = accountService.createAccount("John", new BigDecimal("10000.00"));
+	    BigDecimal withdrawAmount = new BigDecimal("3000.00");
+
+	    accountService.withdraw(account.getAccountId(), withdrawAmount);
+
+	    List<Transaction> history = transactionService.getTransactionHistory(account.getAccountId());
+
+	    assertEquals(1, history.size());
+	    assertEquals(TransactionType.DEBIT, history.get(0).transactionType());
+	    assertEquals(withdrawAmount, history.get(0).amount());
+	}
+	
+	@Test
+	void transfer_withValidAmount_recordsTransactionsForBothAccounts() {
+	    Accounts fromAccount = accountService.createAccount("Mafi", new BigDecimal("10000.00"));
+	    Accounts toAccount = accountService.createAccount("John", new BigDecimal("2000.00"));
+	    BigDecimal transferAmount = new BigDecimal("3000.00");
+
+	    accountService.transfer(fromAccount.getAccountId(), toAccount.getAccountId(), transferAmount);
+
+	    List<Transaction> fromHistory = transactionService.getTransactionHistory(fromAccount.getAccountId());
+	    List<Transaction> toHistory = transactionService.getTransactionHistory(toAccount.getAccountId());
+
+	    assertEquals(1, fromHistory.size());
+	    assertEquals(TransactionType.DEBIT, fromHistory.get(0).transactionType());
+
+	    assertEquals(1, toHistory.size());
+	    assertEquals(TransactionType.CREDIT, toHistory.get(0).transactionType());
+	}
 
 }
