@@ -65,5 +65,45 @@ public class AccountServiceTest {
 		assertThrows(IllegalArgumentException.class,() -> {accountService.deposit(account.getAccountId(),depositAmount);});
 	}
 	
+	@Test
+	void withdraw_withValidAmount_fromValidAccountCorrectly() {
+		String accountName ="Mafi";
+		BigDecimal amount = new BigDecimal("10000.00");
+		BigDecimal withdrawAmount = new BigDecimal("5000.00");
+		Accounts account = accountService.createAccount(accountName, amount);
+		accountService.withdraw(account.getAccountId(),withdrawAmount);
+		
+		assertEquals(new BigDecimal("5000.00"), account.getBalance());
+		
+	}
+	
+	@Test
+	void withdraw_fromNonExistingAccount_throwsException() {
+		BigDecimal withdrawAmount = new BigDecimal("5000.00");
+		
+		assertThrows(IllegalArgumentException.class,() -> {
+			accountService.deposit(0L, withdrawAmount);
+		});
+	}
+	
+	@Test
+	void withdraw_withNegativeAmount_throwsException() {
+		String accountName = "John";
+		BigDecimal amount = new BigDecimal("10000.00");
+		BigDecimal withdrawAmount = new BigDecimal("-5000.00");
+		Accounts account = accountService.createAccount(accountName, amount);
+		
+		assertThrows(IllegalArgumentException.class,() -> {accountService.withdraw(account.getAccountId(),withdrawAmount);});
+	}
+	
+	@Test
+	void withdraw_withValidAmount_insufficientBalance_throwsException() {
+		String accountName = "John";
+		BigDecimal amount = new BigDecimal("10000.00");
+		BigDecimal withdrawAmount = new BigDecimal("15000.00");
+		Accounts account = accountService.createAccount(accountName, amount);
+		
+		assertThrows(IllegalArgumentException.class,() -> {accountService.withdraw(account.getAccountId(),withdrawAmount);});
+	}
 
 }
