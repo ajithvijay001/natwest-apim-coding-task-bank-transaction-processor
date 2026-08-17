@@ -35,4 +35,17 @@ public class AccountService {
 		return account;
 	}
 	
+	public Accounts withdraw(Long accountId, BigDecimal withdrawAmount) {
+		
+		if(!accountMap.containsKey(accountId)) throw new IllegalArgumentException("Account Id does not exists.");
+		
+		if(withdrawAmount.compareTo(BigDecimal.ZERO)<=0) throw new IllegalArgumentException("Withdrawal amount should be greater than 0.");
+		
+		Accounts account = accountMap.get(accountId);
+		if(account.getBalance().compareTo(withdrawAmount)<0) throw new IllegalArgumentException("Insufficient Balance.");
+		
+		account.setBalance(account.getBalance().subtract(withdrawAmount));
+		
+		return account;
+	}
 }
