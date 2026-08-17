@@ -2,6 +2,7 @@ package com.natwest.bank_transaction_processor.controller;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -108,6 +109,19 @@ public class AccountControllerTest {
         		.contentType(MediaType.APPLICATION_JSON)
         		.content(requestBody))
         .andExpect(status().isOk());
+    }
+    
+    @Test
+    void getBalance_forExistingAccount_returns200AndBalance() throws Exception {
+        Accounts mockAccount = new Accounts("John", new BigDecimal("10000.00"));
+        mockAccount.setAccountId(1234567890123456L);
+
+        when(accountService.getAccount(1234567890123456L)).thenReturn(mockAccount);
+
+        mockMvc.perform(get("/accounts/1234567890123456/balance"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accountId").value(1234567890123456L))
+                .andExpect(jsonPath("$.balance").value(10000.00));
     }
     
 }
