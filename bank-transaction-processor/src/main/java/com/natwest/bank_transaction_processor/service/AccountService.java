@@ -7,8 +7,15 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.natwest.bank_transaction_processor.model.Accounts;
+import com.natwest.bank_transaction_processor.model.enums.TransactionType;
 
 public class AccountService {
+	
+	private final TransactionService transactionService;
+	
+	AccountService(TransactionService transactionService){
+		this.transactionService = transactionService;
+	}
 
 	Map<Long, Accounts> accountMap = new HashMap<>();
 	public Accounts createAccount(String accountName, BigDecimal amount) {
@@ -31,6 +38,7 @@ public class AccountService {
 		
 		Accounts account = accountMap.get(accountId);
 		account.setBalance(account.getBalance().add(depositAmount));
+		transactionService.recordTransaction(accountId, TransactionType.CREDIT, depositAmount, account.getBalance());
 		
 		return account;
 	}
@@ -45,6 +53,8 @@ public class AccountService {
 		if(account.getBalance().compareTo(withdrawAmount)<0) throw new IllegalArgumentException("Insufficient Balance.");
 		
 		account.setBalance(account.getBalance().subtract(withdrawAmount));
+		
+		transactionService.recordTransaction(accountId, TransactionType.DEBIT, withdrawAmount, account.getBalance());
 		
 		return account;
 	}
