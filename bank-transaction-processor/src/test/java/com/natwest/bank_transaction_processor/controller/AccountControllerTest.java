@@ -48,4 +48,23 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("$.accountId").value(1234567890123456L))
                 .andExpect(jsonPath("$.accountName").value("John"));
     }
+    
+    @Test
+    void deposit_withValidRequest_returns200AndUpdatedAccount() throws Exception {
+        Accounts mockAccount = new Accounts("John", new BigDecimal("15000.00"));
+        mockAccount.setAccountId(1234567890123456L);
+
+        when(accountService.deposit(1234567890123456L, new BigDecimal("5000.00")))
+                .thenReturn(mockAccount);
+
+        String requestBody = """
+                { "amount": 5000.00 }
+                """;
+
+        mockMvc.perform(post("/accounts/1234567890123456/deposit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.balance").value(15000.00));
+    }
 }

@@ -1,11 +1,13 @@
 package com.natwest.bank_transaction_processor.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.natwest.bank_transaction_processor.dto.AmountRequest;
 import com.natwest.bank_transaction_processor.dto.CreateAccountRequest;
 import com.natwest.bank_transaction_processor.model.Accounts;
 import com.natwest.bank_transaction_processor.service.AccountService;
@@ -23,6 +25,12 @@ public class AccountController {
     @PostMapping
     public ResponseEntity<Accounts> createAccount(@RequestBody CreateAccountRequest request) {
         Accounts account = accountService.createAccount(request.getAccountName(), request.getInitialBalance());
+        return ResponseEntity.ok(account);
+    }
+    
+    @PostMapping("/{id}/deposit")
+    public ResponseEntity<Accounts> deposit(@PathVariable Long id, @RequestBody AmountRequest request) {
+        Accounts account = accountService.deposit(id, request.getAmount());
         return ResponseEntity.ok(account);
     }
 }
