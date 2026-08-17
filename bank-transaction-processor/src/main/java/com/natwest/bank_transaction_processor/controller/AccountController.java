@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.natwest.bank_transaction_processor.dto.AmountRequest;
 import com.natwest.bank_transaction_processor.dto.CreateAccountRequest;
+import com.natwest.bank_transaction_processor.dto.TransferReqeust;
 import com.natwest.bank_transaction_processor.model.Accounts;
 import com.natwest.bank_transaction_processor.service.AccountService;
 
@@ -38,5 +39,12 @@ public class AccountController {
     public ResponseEntity<Accounts> withdraw(@PathVariable Long id, @RequestBody AmountRequest request) {
         Accounts account = accountService.withdraw(id, request.getAmount());
         return ResponseEntity.ok(account);
+    }
+    
+
+    @PostMapping("/transfer")
+    public ResponseEntity<Void> transfer(@RequestBody TransferReqeust request) {
+        accountService.transfer(request.getFromAccountId(), request.getToAccountId(), request.getAmount());
+        return ResponseEntity.ok().build();
     }
 }
